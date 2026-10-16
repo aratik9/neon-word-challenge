@@ -4,7 +4,7 @@ A futuristic word puzzle game featuring a neon gaming interface, glowing effects
 
 🎮 Live Demo
 
-Play the game online: https://YOUR-USERNAME.github.io/neon-word-challenge/
+Play the game online: https://aratik9.github.io/neon-word-challenge/
 
 Replace YOUR-USERNAME with your GitHub username after enabling GitHub Pages.
 ✨ Features
@@ -27,7 +27,7 @@ Open the project folder.
 Open index.html in your web browser.
 Start playing!
 Clone the Repository
-git clone https://github.com/YOUR-USERNAME/neon-word-challenge.git
+git clone 
 cd neon-word-challenge
 
 
