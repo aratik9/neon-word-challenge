@@ -1,0 +1,481 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEON WORD CHALLENGE</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-family: "Courier New", monospace;
+  color: #eafaff;
+  background:
+    radial-gradient(ellipse at top, #15254c 0%, #080b19 55%, #02040a 100%);
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(#00f7ff0a 1px, transparent 1px),
+    linear-gradient(90deg, #00f7ff0a 1px, transparent 1px);
+  background-size: 35px 35px;
+  mask-image: linear-gradient(to bottom, black, transparent);
+}
+
+.game {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  padding: 30px 24px;
+  border: 1px solid #00f7ff70;
+  border-radius: 22px;
+  background: #090f20eF;
+  box-shadow: 0 0 35px #00eaff20,
+              inset 0 0 30px #00eaff08;
+  text-align: center;
+}
+
+.tag {
+  color: #ff3cf7;
+  font-size: 11px;
+  letter-spacing: 4px;
+  margin-bottom: 12px;
+}
+
+h1 {
+  font-size: clamp(26px, 7vw, 38px);
+  line-height: 1.2;
+  color: #fff;
+  text-shadow: 0 0 10px #00f7ff, 0 0 30px #00f7ff60;
+}
+
+h1 span { color: #00f7ff; }
+
+.subtitle {
+  margin-top: 12px;
+  color: #91a6c8;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 26px 0;
+}
+
+.stat {
+  flex: 1;
+  padding: 13px 5px;
+  border: 1px solid #263e60;
+  border-radius: 12px;
+  background: #0b1730;
+}
+
+.stat small {
+  display: block;
+  font-size: 10px;
+  color: #8ba7c9;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.stat strong {
+  font-size: 23px;
+  color: #00f7ff;
+  text-shadow: 0 0 12px #00f7ff70;
+}
+
+.timer-warning { color: #ff477e !important; }
+
+.label {
+  color: #a9bedb;
+  font-size: 11px;
+  letter-spacing: 3px;
+}
+
+.word {
+  margin: 22px 0;
+  padding: 20px 8px;
+  border: 1px solid #ff3cf760;
+  border-radius: 14px;
+  background: linear-gradient(120deg, #ff3cf70b, #00f7ff0b);
+  color: #ff68fa;
+  font-size: clamp(25px, 8vw, 38px);
+  font-weight: bold;
+  letter-spacing: 7px;
+  text-shadow: 0 0 15px #ff3cf7;
+  overflow-wrap: anywhere;
+  animation: pulse 2s infinite alternate;
+}
+
+@keyframes pulse {
+  from { box-shadow: 0 0 5px #ff3cf720; }
+  to { box-shadow: 0 0 22px #ff3cf730; }
+}
+
+input {
+  width: 100%;
+  padding: 16px;
+  color: #fff;
+  background: #050b18;
+  border: 1px solid #00f7ff80;
+  border-radius: 10px;
+  outline: none;
+  text-align: center;
+  font: bold 18px "Courier New", monospace;
+  letter-spacing: 2px;
+}
+
+input:focus {
+  box-shadow: 0 0 15px #00f7ff35;
+  border-color: #00f7ff;
+}
+
+input::placeholder {
+  color: #5c7191;
+  font-size: 13px;
+}
+
+.buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+button {
+  padding: 14px 8px;
+  border: 1px solid #00f7ff;
+  border-radius: 9px;
+  background: #00f7ff12;
+  color: #00f7ff;
+  font: bold 12px "Courier New", monospace;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+button:hover {
+  color: #050b18;
+  background: #00f7ff;
+  box-shadow: 0 0 20px #00f7ff70;
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+button.secondary {
+  border-color: #ff3cf7;
+  color: #ff69fa;
+}
+
+button.secondary:hover {
+  background: #ff3cf7;
+  color: #090f20;
+  box-shadow: 0 0 20px #ff3cf770;
+}
+
+.message {
+  min-height: 25px;
+  margin-top: 18px;
+  font-size: 13px;
+  color: #a8c3df;
+}
+
+.message.good { color: #39ffad; }
+.message.bad { color: #ff658a; }
+
+.progress-track {
+  height: 4px;
+  background: #1b2943;
+  border-radius: 10px;
+  margin-top: 18px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #00f7ff, #ff3cf7);
+  transition: width 1s linear;
+}
+
+.footer {
+  margin-top: 22px;
+  font-size: 10px;
+  color: #617897;
+  letter-spacing: 2px;
+}
+
+@media(max-width: 400px) {
+  .game { padding: 25px 16px; }
+  .stat strong { font-size: 20px; }
+}
+</style>
+</head>
+
+<body>
+<main class="game">
+  <div class="tag">◆ NEURAL ARCADE / SYSTEM 01 ◆</div>
+
+  <h1>WORD <span>CHALLENGE</span></h1>
+  <p class="subtitle">DECODE THE WORD. BEAT THE CLOCK.</p>
+
+  <section class="stats">
+    <div class="stat">
+      <small>SCORE</small>
+      <strong id="score">0</strong>
+    </div>
+    <div class="stat">
+      <small>TIME</small>
+      <strong id="time">30</strong>
+    </div>
+    <div class="stat">
+      <small>LEVEL</small>
+      <strong id="level">1</strong>
+    </div>
+  </section>
+
+  <p class="label">UNSCRAMBLE THIS WORD</p>
+  <div class="word" id="word">ELPPA</div>
+
+  <input
+    id="answer"
+    type="text"
+    placeholder="TYPE YOUR ANSWER..."
+    autocomplete="off"
+    maxlength="30"
+    aria-label="Your word answer"
+  >
+
+  <div class="buttons">
+    <button id="submitBtn" onclick="checkAnswer()">⚡ SUBMIT</button>
+    <button class="secondary" id="hintBtn" onclick="showHint()">◈ GET HINT</button>
+    <button onclick="skipWord()">↻ SKIP WORD</button>
+    <button class="secondary" id="restartBtn" onclick="restartGame()">⟲ RESTART</button>
+  </div>
+
+  <p class="message" id="message" aria-live="polite">
+    SYSTEM READY. ENTER YOUR ANSWER.
+  </p>
+
+  <div class="progress-track">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <div class="footer">POWERED BY YOUR BRAIN // GOOD LUCK</div>
+</main>
+
+<script>
+const words = [
+  { word: "APPLE", hint: "A fruit that can be red or green." },
+  { word: "ROBOT", hint: "A programmable machine." },
+  { word: "SPACE", hint: "The vast region beyond Earth." },
+  { word: "BRAIN", hint: "The organ that processes thoughts." },
+  { word: "LASER", hint: "A focused beam of light." },
+  { word: "GHOST", hint: "A spooky supernatural figure." },
+  { word: "PIXEL", hint: "A tiny unit of a digital image." },
+  { word: "CYBER", hint: "A prefix associated with computers." },
+  { word: "GALAXY", hint: "A huge system of stars." },
+  { word: "PLANET", hint: "Earth is one of these." },
+  { word: "PUZZLE", hint: "A problem that needs solving." },
+  { word: "ENERGY", hint: "The ability to do work." },
+  { word: "NEBULA", hint: "A cloud of gas and dust in space." },
+  { word: "QUANTUM", hint: "A concept in modern physics." },
+  { word: "DIAMOND", hint: "A very hard precious gemstone." }
+];
+
+let score = 0;
+let level = 1;
+let timeLeft = 30;
+let current = null;
+let scrambled = "";
+let used = [];
+let timer = null;
+let running = false;
+let locked = false;
+let hintUsed = false;
+
+const $ = id => document.getElementById(id);
+
+function shuffleWord(word) {
+  if (word.length < 2) return word;
+
+  let result = word;
+  for (let i = 0; i < 15 && result === word; i++) {
+    result = word.split("")
+      .sort(() => Math.random() - 0.5)
+      .join("");
+  }
+
+  if (result === word) {
+    result = word.slice(1) + word[0];
+  }
+  return result;
+}
+
+function nextWord() {
+  if (!running) return;
+
+  if (used.length === words.length) used = [];
+
+  const available = words
+    .map((item, i) => ({ item, i }))
+    .filter(entry => !used.includes(entry.i));
+
+  const pick = available[
+    Math.floor(Math.random() * available.length)
+  ];
+
+  current = pick.item;
+  used.push(pick.i);
+  scrambled = shuffleWord(current.word);
+  hintUsed = false;
+
+  $("word").textContent = scrambled;
+  $("answer").value = "";
+  $("answer").disabled = false;
+  $("submitBtn").disabled = false;
+  $("hintBtn").disabled = false;
+  $("message").textContent = "DECODE THE WORD TO EARN POINTS.";
+  $("message").className = "message";
+  $("answer").focus();
+}
+
+function updateStats() {
+  $("score").textContent = score;
+  $("time").textContent = timeLeft;
+  $("level").textContent = level;
+  $("time").classList.toggle("timer-warning", timeLeft <= 10);
+  $("progress").style.width = (timeLeft / 30 * 100) + "%";
+}
+
+function checkAnswer() {
+  if (!running || locked) return;
+
+  const answer = $("answer").value.trim().toUpperCase();
+
+  if (!answer) {
+    $("message").textContent = "⚠ ENTER A WORD FIRST.";
+    $("message").className = "message bad";
+    return;
+  }
+
+  if (answer === current.word) {
+    locked = true;
+    const points = hintUsed ? 5 : 10;
+    score += points;
+
+    $("message").textContent = `✓ CORRECT! +${points} POINTS`;
+    $("message").className = "message good";
+
+    const newLevel = Math.floor(score / 50) + 1;
+    if (newLevel > level) {
+      level = newLevel;
+      timeLeft = Math.min(30, timeLeft + 5);
+      $("message").textContent += " LEVEL UP! +5 SEC";
+    }
+
+    updateStats();
+    $("answer").disabled = true;
+    $("submitBtn").disabled = true;
+    $("hintBtn").disabled = true;
+
+    setTimeout(() => {
+      locked = false;
+      if (running) nextWord();
+    }, 700);
+  } else {
+    score = Math.max(0, score - 2);
+    $("message").textContent = "✕ WRONG WORD. TRY AGAIN (-2)";
+    $("message").className = "message bad";
+    updateStats();
+  }
+}
+
+function showHint() {
+  if (!running || hintUsed || locked) return;
+
+  hintUsed = true;
+  $("message").textContent = "HINT: " + current.hint + " (5 POINTS)";
+  $("message").className = "message";
+  $("hintBtn").disabled = true;
+}
+
+function skipWord() {
+  if (!running || locked) return;
+
+  score = Math.max(0, score - 3);
+  updateStats();
+  nextWord();
+}
+
+function endGame() {
+  running = false;
+  clearInterval(timer);
+  locked = true;
+
+  $("word").textContent = "GAME OVER";
+  $("answer").disabled = true;
+  $("submitBtn").disabled = true;
+  $("hintBtn").disabled = true;
+  $("message").textContent =
+    `FINAL SCORE: ${score} // LEVEL ${level}. RESTART TO PLAY AGAIN.`;
+  $("message").className = "message bad";
+  $("progress").style.width = "0%";
+}
+
+function restartGame() {
+  clearInterval(timer);
+
+  score = 0;
+  level = 1;
+  timeLeft = 30;
+  used = [];
+  running = true;
+  locked = false;
+
+  updateStats();
+  nextWord();
+
+  timer = setInterval(() => {
+    if (!running) return;
+
+    timeLeft--;
+    updateStats();
+
+    if (timeLeft <= 0) endGame();
+  }, 1000);
+}
+
+$("answer").addEventListener("keydown", event => {
+  if (event.key === "Enter") checkAnswer();
+});
+
+// Start a new game automatically.
+restartGame();
+</script>
+</body>
+</html>
